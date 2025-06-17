@@ -72,8 +72,8 @@ lv_obj_t *zmk_display_status_screen() {
     lv_obj_align(zmk_widget_wpm_status_obj(&wpm_status_widget), LV_ALIGN_BOTTOM_LEFT, 15, -10);
 #endif
 
-    zmk_widget_logo_init(&logo_widget, screen);
-    lv_obj_align(zmk_widget_logo_obj(&logo_widget), LV_ALIGN_CENTER, 0, 0);
+    // zmk_widget_logo_init(&logo_widget, screen);
+    // lv_obj_align(zmk_widget_logo_obj(&logo_widget), LV_ALIGN_CENTER, 0, 0);
 
     return screen;
 }
