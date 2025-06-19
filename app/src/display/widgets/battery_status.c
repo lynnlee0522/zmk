@@ -78,7 +78,7 @@ static void set_battery_symbol(lv_obj_t *label, struct battery_status_state stat
     }
 
     // 设置text的字体
-    lv_obj_set_style_text_font(label, &lv_font_montserrat_20, 0);
+    lv_obj_set_style_text_font(label, &lv_font_montserrat_16, 0);
     // 新建标签显示电池状态
     lv_label_set_text(label, text);
 }

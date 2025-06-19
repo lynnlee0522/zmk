@@ -25,13 +25,11 @@ struct wpm_status_state wpm_status_get_state(const zmk_event_t *eh) {
 };
 
 void set_wpm_symbol(lv_obj_t *label, struct wpm_status_state state) {
-    char text[4] = {};
-
-    LOG_DBG("WPM changed to %i", state.wpm);
-    snprintf(text, sizeof(text), "%i", state.wpm);
+    char text[10] = {};
+    LOG_ERR("WPM changed to %i", state.wpm);
+    snprintf(text, sizeof(text), "wpm: %i", state.wpm);
 
     lv_label_set_text(label, text);
-    lv_obj_align(label, LV_ALIGN_BOTTOM_RIGHT, 0, 0);
 }
 
 void wpm_status_update_cb(struct wpm_status_state state) {
@@ -45,10 +43,7 @@ ZMK_SUBSCRIPTION(widget_wpm_status, zmk_wpm_state_changed);
 
 int zmk_widget_wpm_status_init(struct zmk_widget_wpm_status *widget, lv_obj_t *parent) {
     widget->obj = lv_label_create(parent);
-    lv_obj_align(widget->obj, LV_ALIGN_RIGHT_MID, 0, 0);
-
     sys_slist_append(&widgets, &widget->node);
-
     widget_wpm_status_init();
     return 0;
 }
