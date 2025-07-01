@@ -5,6 +5,7 @@
  */
 
 #include <zmk/display/widgets/output_status.h>
+#include <zmk/display/widgets/hid_indicators_status.h>
 #include <zmk/display/widgets/peripheral_status.h>
 #include <zmk/display/widgets/battery_status.h>
 #include <zmk/display/widgets/layer_status.h>
@@ -35,6 +36,10 @@ static struct zmk_widget_layer_status layer_status_widget;
 static struct zmk_widget_wpm_status wpm_status_widget;
 #endif
 
+#if IS_ENABLED(CONFIG_ZMK_WIDGET_INDICATORS_STATUS)
+static struct zmk_widget_hid_indicators_status indicators_status_widget;
+#endif
+
 static struct zmk_widget_logo logo_widget;
 
 lv_obj_t *zmk_display_status_screen() {
@@ -60,16 +65,22 @@ lv_obj_t *zmk_display_status_screen() {
                  -55);
 #endif
 
-    // #if IS_ENABLED(CONFIG_ZMK_WIDGET_LAYER_STATUS)
-    //     zmk_widget_layer_status_init(&layer_status_widget, screen);
-    //     lv_obj_set_style_text_font(zmk_widget_layer_status_obj(&layer_status_widget),
-    //                                lv_theme_get_font_small(screen), LV_PART_MAIN);
-    //     lv_obj_align(zmk_widget_layer_status_obj(&layer_status_widget), LV_ALIGN_CENTER, 0, 0);
-    // #endif
+#if IS_ENABLED(CONFIG_ZMK_WIDGET_LAYER_STATUS)
+    zmk_widget_layer_status_init(&layer_status_widget, screen);
+    lv_obj_set_style_text_font(zmk_widget_layer_status_obj(&layer_status_widget),
+                               lv_theme_get_font_small(screen), LV_PART_MAIN);
+    lv_obj_align(zmk_widget_layer_status_obj(&layer_status_widget), LV_ALIGN_CENTER, 0, 0);
+#endif
 
 #if IS_ENABLED(CONFIG_ZMK_WIDGET_WPM_STATUS)
     zmk_widget_wpm_status_init(&wpm_status_widget, screen);
     lv_obj_align(zmk_widget_wpm_status_obj(&wpm_status_widget), LV_ALIGN_BOTTOM_LEFT, 15, -10);
+#endif
+
+#if IS_ENABLED(CONFIG_ZMK_WIDGET_INDICATORS_STATUS)
+    zmk_widget_hid_indicators_status_init(&indicators_status_widget, screen);
+    lv_obj_align(zmk_widget_hid_indicators_status_obj(&indicators_status_widget),
+                 LV_ALIGN_BOTTOM_RIGHT, -20, -20);
 #endif
 
     // zmk_widget_logo_init(&logo_widget, screen);
