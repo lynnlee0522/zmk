@@ -45,49 +45,42 @@ static struct zmk_widget_logo logo_widget;
 lv_obj_t *zmk_display_status_screen() {
     lv_obj_t *screen;
     screen = lv_obj_create(NULL);
-    // screen的背景色为深蓝色
-    // lv_obj_set_style_bg_color(screen, lv_color_hex(0x000080), LV_PART_MAIN);
+    // screen的背景色为白色
+    lv_obj_set_style_bg_color(screen, lv_color_white(), LV_PART_MAIN);
 
-    LOG_ERR("Creating status screen");
+#if IS_ENABLED(CONFIG_ZMK_WIDGET_BATTERY_STATUS)
+    zmk_widget_battery_status_init(&battery_status_widget, screen);
+    lv_obj_align(zmk_widget_battery_status_obj(&battery_status_widget), LV_ALIGN_TOP_RIGHT, 0, 0);
+#endif
 
-    // #if IS_ENABLED(CONFIG_ZMK_WIDGET_BATTERY_STATUS)
-    //     zmk_widget_battery_status_init(&battery_status_widget, screen);
-    //     lv_obj_align(zmk_widget_battery_status_obj(&battery_status_widget), LV_ALIGN_TOP_RIGHT,
-    //     0, 0);
-    // #endif
+#if IS_ENABLED(CONFIG_ZMK_WIDGET_OUTPUT_STATUS)
+    zmk_widget_output_status_init(&output_status_widget, screen);
+    lv_obj_align(zmk_widget_output_status_obj(&output_status_widget), LV_ALIGN_TOP_LEFT, 0, 0);
+#endif
 
-    // #if IS_ENABLED(CONFIG_ZMK_WIDGET_OUTPUT_STATUS)
-    //     zmk_widget_output_status_init(&output_status_widget, screen);
-    //     lv_obj_align(zmk_widget_output_status_obj(&output_status_widget), LV_ALIGN_TOP_LEFT, 0,
-    //     0);
-    // #endif
+#if IS_ENABLED(CONFIG_ZMK_WIDGET_PERIPHERAL_STATUS)
+    zmk_widget_peripheral_status_init(&peripheral_status_widget, screen);
+    lv_obj_align(zmk_widget_peripheral_status_obj(&peripheral_status_widget), LV_ALIGN_TOP_MID, 0,
+                 25);
+#endif
 
-    // #if IS_ENABLED(CONFIG_ZMK_WIDGET_PERIPHERAL_STATUS)
-    //     zmk_widget_peripheral_status_init(&peripheral_status_widget, screen);
-    //     lv_obj_align(zmk_widget_peripheral_status_obj(&peripheral_status_widget),
-    //     LV_ALIGN_TOP_MID, 0,
-    //                  25);
-    // #endif
+#if IS_ENABLED(CONFIG_ZMK_WIDGET_LAYER_STATUS)
+    zmk_widget_layer_status_init(&layer_status_widget, screen);
+    lv_obj_set_style_text_font(zmk_widget_layer_status_obj(&layer_status_widget),
+                               lv_theme_get_font_small(screen), LV_PART_MAIN);
+    lv_obj_align(zmk_widget_layer_status_obj(&layer_status_widget), LV_ALIGN_CENTER, 0, 35);
+#endif
 
-    // #if IS_ENABLED(CONFIG_ZMK_WIDGET_LAYER_STATUS)
-    //     zmk_widget_layer_status_init(&layer_status_widget, screen);
-    //     lv_obj_set_style_text_font(zmk_widget_layer_status_obj(&layer_status_widget),
-    //                                lv_theme_get_font_small(screen), LV_PART_MAIN);
-    //     lv_obj_align(zmk_widget_layer_status_obj(&layer_status_widget), LV_ALIGN_TOP_MID, 0, 50);
-    // #endif
+#if IS_ENABLED(CONFIG_ZMK_WIDGET_WPM_STATUS)
+    zmk_widget_wpm_status_init(&wpm_status_widget, screen);
+    lv_obj_align(zmk_widget_wpm_status_obj(&wpm_status_widget), LV_ALIGN_BOTTOM_LEFT, 0, 0);
+#endif
 
-    // #if IS_ENABLED(CONFIG_ZMK_WIDGET_WPM_STATUS)
-    //     zmk_widget_wpm_status_init(&wpm_status_widget, screen);
-    //     lv_obj_align(zmk_widget_wpm_status_obj(&wpm_status_widget), LV_ALIGN_BOTTOM_LEFT, 15,
-    //     -10);
-    // #endif
-
-    // #if IS_ENABLED(CONFIG_ZMK_WIDGET_INDICATORS_STATUS)
-    //     zmk_widget_hid_indicators_status_init(&indicators_status_widget, screen);
-    //     lv_obj_align(zmk_widget_hid_indicators_status_obj(&indicators_status_widget),
-    //     LV_ALIGN_CENTER,
-    //                  0, 0);
-    // #endif
+#if IS_ENABLED(CONFIG_ZMK_WIDGET_INDICATORS_STATUS)
+    zmk_widget_hid_indicators_status_init(&indicators_status_widget, screen);
+    lv_obj_align(zmk_widget_hid_indicators_status_obj(&indicators_status_widget),
+                 LV_ALIGN_BOTTOM_RIGHT, 0, 0);
+#endif
 
     // zmk_widget_logo_init(&logo_widget, screen);
     // lv_obj_align(zmk_widget_logo_obj(&logo_widget), LV_ALIGN_CENTER, 0, 0);

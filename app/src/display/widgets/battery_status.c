@@ -77,8 +77,6 @@ static void set_battery_symbol(lv_obj_t *label, struct battery_status_state stat
         }
     }
 
-    // 设置text的字体
-    lv_obj_set_style_text_font(label, &lv_font_montserrat_16, 0);
     // 新建标签显示电池状态
     lv_label_set_text(label, text);
 }
@@ -136,6 +134,8 @@ ZMK_SUBSCRIPTION(widget_battery_status, zmk_usb_conn_state_changed);
 
 int zmk_widget_battery_status_init(struct zmk_widget_battery_status *widget, lv_obj_t *parent) {
     widget->obj = lv_label_create(parent);
+    // 设置text的字体
+    lv_obj_set_style_text_font(widget->obj, &lv_font_montserrat_16, LV_PART_MAIN);
     sys_slist_append(&widgets, &widget->node);
     widget_battery_status_init();
     return 0;

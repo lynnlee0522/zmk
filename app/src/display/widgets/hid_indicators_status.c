@@ -59,7 +59,6 @@ int zmk_widget_hid_indicators_status_init(struct zmk_widget_hid_indicators_statu
 
     // 只设置一次样式
     lv_obj_set_style_text_font(widget->obj, &lv_font_montserrat_14, LV_PART_MAIN);
-    lv_obj_set_style_text_color(widget->obj, lv_color_make(0, 0, 0), LV_PART_MAIN);
 
     sys_slist_append(&widgets, &widget->node);
     widget_hid_indicators_status_init();

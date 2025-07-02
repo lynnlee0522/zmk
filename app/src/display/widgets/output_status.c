@@ -42,9 +42,7 @@ static struct output_status_state get_state(const zmk_event_t *_eh) {
 static void set_status_symbol(lv_obj_t *label, struct output_status_state state) {
     // 设置label使用自定义符号字体
 
-    lv_label_set_recolor(label, true);
     char text[40] = {};
-
     switch (state.selected_endpoint.transport) {
     case ZMK_TRANSPORT_USB:
         snprintf(text, sizeof(text), LV_SYMBOL_USB);
@@ -71,8 +69,7 @@ static void set_status_symbol(lv_obj_t *label, struct output_status_state state)
     }
 
     // 设置text的颜色为白色，字体大小为22
-    lv_obj_set_style_text_font(label, &lv_custom_symbol, LV_PART_MAIN);
-    lv_obj_set_style_text_align(label, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN);
+    // lv_obj_set_style_text_align(label, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN);
 
     lv_label_set_text(label, text);
 }
@@ -93,7 +90,7 @@ ZMK_SUBSCRIPTION(widget_output_status, zmk_ble_active_profile_changed);
 
 int zmk_widget_output_status_init(struct zmk_widget_output_status *widget, lv_obj_t *parent) {
     widget->obj = lv_label_create(parent);
-
+    lv_obj_set_style_text_font(widget->obj, &lv_custom_symbol, LV_PART_MAIN);
     sys_slist_append(&widgets, &widget->node);
 
     widget_output_status_init();
