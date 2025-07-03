@@ -46,7 +46,7 @@ lv_obj_t *zmk_display_status_screen() {
     lv_obj_t *screen;
     screen = lv_obj_create(NULL);
     // screen的背景色为白色
-    lv_obj_set_style_bg_color(screen, lv_color_white(), LV_PART_MAIN);
+    // lv_obj_set_style_bg_color(screen, lv_color_hex(0x000080), LV_PART_MAIN);
 
 #if IS_ENABLED(CONFIG_ZMK_WIDGET_BATTERY_STATUS)
     zmk_widget_battery_status_init(&battery_status_widget, screen);
@@ -57,11 +57,15 @@ lv_obj_t *zmk_display_status_screen() {
     zmk_widget_output_status_init(&output_status_widget, screen);
     lv_obj_align(zmk_widget_output_status_obj(&output_status_widget), LV_ALIGN_TOP_LEFT, 0, 0);
 #endif
+    // 展示logo
+
+    zmk_widget_logo_init(&logo_widget, screen);
+    lv_obj_align(zmk_widget_logo_obj(&logo_widget), LV_ALIGN_TOP_MID, 0, 35);
 
 #if IS_ENABLED(CONFIG_ZMK_WIDGET_PERIPHERAL_STATUS)
     zmk_widget_peripheral_status_init(&peripheral_status_widget, screen);
     lv_obj_align(zmk_widget_peripheral_status_obj(&peripheral_status_widget), LV_ALIGN_TOP_MID, 0,
-                 25);
+                 80);
 #endif
 
 #if IS_ENABLED(CONFIG_ZMK_WIDGET_LAYER_STATUS)
@@ -81,9 +85,6 @@ lv_obj_t *zmk_display_status_screen() {
     lv_obj_align(zmk_widget_hid_indicators_status_obj(&indicators_status_widget),
                  LV_ALIGN_BOTTOM_RIGHT, 0, 0);
 #endif
-
-    // zmk_widget_logo_init(&logo_widget, screen);
-    // lv_obj_align(zmk_widget_logo_obj(&logo_widget), LV_ALIGN_CENTER, 0, 0);
 
     return screen;
 }
