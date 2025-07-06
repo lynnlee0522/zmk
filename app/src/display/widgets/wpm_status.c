@@ -15,6 +15,7 @@ LOG_MODULE_DECLARE(zmk, CONFIG_ZMK_LOG_LEVEL);
 #include <zmk/wpm.h>
 
 static sys_slist_t widgets = SYS_SLIST_STATIC_INIT(&widgets);
+LV_FONT_DECLARE(font_14_zqk);
 
 struct wpm_status_state {
     uint8_t wpm;
@@ -26,7 +27,7 @@ struct wpm_status_state wpm_status_get_state(const zmk_event_t *eh) {
 
 void set_wpm_symbol(lv_obj_t *label, struct wpm_status_state state) {
     char text[10] = {};
-    snprintf(text, sizeof(text), "wpm: %i", state.wpm);
+    snprintf(text, sizeof(text), "WPM : %i", state.wpm);
 
     lv_label_set_text(label, text);
 }
@@ -43,7 +44,7 @@ ZMK_SUBSCRIPTION(widget_wpm_status, zmk_wpm_state_changed);
 int zmk_widget_wpm_status_init(struct zmk_widget_wpm_status *widget, lv_obj_t *parent) {
     widget->obj = lv_label_create(parent);
     // 只设置一次样式
-    lv_obj_set_style_text_font(widget->obj, &lv_font_montserrat_14, LV_PART_MAIN);
+    lv_obj_set_style_text_font(widget->obj, &font_14_zqk, LV_PART_MAIN);
     sys_slist_append(&widgets, &widget->node);
     widget_wpm_status_init();
     return 0;

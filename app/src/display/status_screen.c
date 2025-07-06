@@ -57,8 +57,8 @@ lv_obj_t *zmk_display_status_screen() {
     zmk_widget_output_status_init(&output_status_widget, screen);
     lv_obj_align(zmk_widget_output_status_obj(&output_status_widget), LV_ALIGN_TOP_LEFT, 0, 0);
 #endif
-    // 展示logo
 
+    // 展示logo
     zmk_widget_logo_init(&logo_widget, screen);
     lv_obj_align(zmk_widget_logo_obj(&logo_widget), LV_ALIGN_TOP_MID, 0, 35);
 
@@ -70,8 +70,6 @@ lv_obj_t *zmk_display_status_screen() {
 
 #if IS_ENABLED(CONFIG_ZMK_WIDGET_LAYER_STATUS)
     zmk_widget_layer_status_init(&layer_status_widget, screen);
-    lv_obj_set_style_text_font(zmk_widget_layer_status_obj(&layer_status_widget),
-                               lv_theme_get_font_small(screen), LV_PART_MAIN);
     lv_obj_align(zmk_widget_layer_status_obj(&layer_status_widget), LV_ALIGN_CENTER, 0, 35);
 #endif
 

@@ -12,6 +12,8 @@ LOG_MODULE_DECLARE(zmk, CONFIG_ZMK_LOG_LEVEL);
 
 static sys_slist_t widgets = SYS_SLIST_STATIC_INIT(&widgets);
 
+LV_FONT_DECLARE(font_18_big_john);
+
 int zmk_widget_logo_init(struct zmk_widget_logo *widget, lv_obj_t *parent) {
     // 创建一个容器，将图片和文本放在同一行
     lv_obj_t *container = lv_obj_create(parent);
@@ -44,8 +46,8 @@ int zmk_widget_logo_init(struct zmk_widget_logo *widget, lv_obj_t *parent) {
     lv_obj_t *label = lv_label_create(container);
     lv_label_set_text(label, "NXT kb");
     lv_obj_set_style_text_align(label, LV_TEXT_ALIGN_LEFT, 0);
-    // 设置字体大小为 20px
-    lv_obj_set_style_text_font(label, &lv_font_montserrat_20, LV_PART_MAIN);
+    // 设置字体大小为 18px
+    lv_obj_set_style_text_font(label, &font_18_big_john, LV_PART_MAIN);
 
     sys_slist_append(&widgets, &widget->node);
     return 0;
