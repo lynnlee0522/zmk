@@ -18,7 +18,7 @@ LOG_MODULE_DECLARE(zmk, CONFIG_ZMK_LOG_LEVEL); // 使用完整路径
 
 static sys_slist_t widgets = SYS_SLIST_STATIC_INIT(&widgets);
 
-LV_FONT_DECLARE(font_14_zqk);
+LV_FONT_DECLARE(font_12_roboto_extra_bold);
 
 struct layer_status_state {
     zmk_keymap_layer_index_t index;
@@ -82,7 +82,8 @@ ZMK_SUBSCRIPTION(widget_layer_status, zmk_layer_state_changed);
 int zmk_widget_layer_status_init(struct zmk_widget_layer_status *widget, lv_obj_t *parent) {
     widget->obj = lv_label_create(parent);
     // 设置字体的大小
-    lv_obj_set_style_text_font(widget->obj, &font_14_zqk, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_text_font(widget->obj, &font_12_roboto_extra_bold,
+                               LV_PART_MAIN | LV_STATE_DEFAULT);
 
     sys_slist_append(&widgets, &widget->node);
 
