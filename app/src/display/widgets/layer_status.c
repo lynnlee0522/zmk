@@ -84,6 +84,8 @@ int zmk_widget_layer_status_init(struct zmk_widget_layer_status *widget, lv_obj_
     // 设置字体的大小
     lv_obj_set_style_text_font(widget->obj, &font_12_roboto_extra_bold,
                                LV_PART_MAIN | LV_STATE_DEFAULT);
+    // 设置文本颜色为橙色
+    lv_obj_set_style_text_color(widget->obj, lv_color_hex(0xFFA500), LV_PART_MAIN);
 
     sys_slist_append(&widgets, &widget->node);
 

@@ -29,6 +29,8 @@ void set_wpm_symbol(lv_obj_t *label, struct wpm_status_state state) {
     char text[10] = {};
     snprintf(text, sizeof(text), "WPM : %i", state.wpm);
     lv_label_set_text(label, text);
+    // 将label的颜色改为橙色
+    lv_obj_set_style_text_color(label, lv_color_hex(0xFFA500), LV_PART_MAIN);
     lv_obj_set_style_text_font(label, &font_12_roboto_extra_bold, LV_PART_MAIN);
 }
 

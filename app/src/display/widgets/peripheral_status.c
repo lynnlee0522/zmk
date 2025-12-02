@@ -60,6 +60,7 @@ ZMK_SUBSCRIPTION(widget_peripheral_status, zmk_split_central_peripheral_status_c
 int zmk_widget_peripheral_status_init(struct zmk_widget_peripheral_status *widget,
                                       lv_obj_t *parent) {
     widget->obj = lv_label_create(parent);
+    lv_obj_set_style_text_color(widget->obj, lv_color_hex(0xFFA500), LV_PART_MAIN);
 
     sys_slist_append(&widgets, &widget->node);
 
