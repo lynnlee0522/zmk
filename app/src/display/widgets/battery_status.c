@@ -69,7 +69,7 @@ static void set_battery_symbol(lv_obj_t *label, struct battery_status_state stat
 #if IS_ENABLED(CONFIG_USB_DEVICE_STACK)
         if (state.usb_present) {
             strcat(text, " ");
-            strcat(text, LV_SYMBOL_CHARGE); // 充电符号
+            strcat(text, "#00ff00 " LV_SYMBOL_CHARGE "#"); // 白色充电符号
         }
 #endif /* IS_ENABLED(CONFIG_USB_DEVICE_STACK) */
 
