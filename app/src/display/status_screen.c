@@ -37,9 +37,9 @@ static struct zmk_widget_layer_status layer_status_widget;
 static struct zmk_widget_wpm_status wpm_status_widget;
 #endif
 
-#if IS_ENABLED(CONFIG_ZMK_WIDGET_INDICATORS_STATUS)
+// #if IS_ENABLED(CONFIG_ZMK_WIDGET_INDICATORS_STATUS)
 static struct zmk_widget_hid_indicators_status indicators_status_widget;
-#endif
+// #endif
 
 static struct zmk_widget_logo logo_widget;
 static struct zmk_widget_kbd_name kbd_name_widget;
@@ -82,11 +82,11 @@ lv_obj_t *zmk_display_status_screen() {
     lv_obj_align(zmk_widget_wpm_status_obj(&wpm_status_widget), LV_ALIGN_BOTTOM_LEFT, 10, -20);
 #endif
 
-#if IS_ENABLED(CONFIG_ZMK_WIDGET_INDICATORS_STATUS)
+    // #if IS_ENABLED(CONFIG_ZMK_WIDGET_INDICATORS_STATUS)
     zmk_widget_hid_indicators_status_init(&indicators_status_widget, screen);
-    lv_obj_align(zmk_widget_hid_indicators_status_obj(&indicators_status_widget),
-                 LV_ALIGN_BOTTOM_RIGHT, 0, 0);
-#endif
+    lv_obj_align(zmk_widget_hid_indicators_status_obj(&indicators_status_widget), LV_ALIGN_CENTER,
+                 -20, -20);
+    // #endif
 
     return screen;
 }
