@@ -41,6 +41,9 @@ static void set_battery_symbol(lv_obj_t *label, struct battery_status_state stat
     char text[64] = {};
     char one[16];
 
+    // 启用富文本着色
+    lv_label_set_recolor(label, true);
+
     for (int i = 0; i < ZMK_SPLIT_CENTRAL_PERIPHERAL_COUNT + ZMK_SPLIT_CENTRAL_COUNT; i++) {
         state = battery_objects[i];
         // 如果是外设且断联（比如level==0），则跳过
@@ -52,18 +55,17 @@ static void set_battery_symbol(lv_obj_t *label, struct battery_status_state stat
 
         // 根据电量设置不同颜色和符号
         if (level > 95) {
-            snprintf(one, sizeof(one), "%s", LV_SYMBOL_BATTERY_FULL); // 绿色
+            snprintf(one, sizeof(one), "#00ff00 %s#", LV_SYMBOL_BATTERY_FULL); // 绿色
         } else if (level > 65) {
-            snprintf(one, sizeof(one), "%s", LV_SYMBOL_BATTERY_3); // 黄绿色
+            snprintf(one, sizeof(one), "#aaff00 %s#", LV_SYMBOL_BATTERY_3); // 黄绿色
         } else if (level > 35) {
-            snprintf(one, sizeof(one), "%s", LV_SYMBOL_BATTERY_2); // 黄色
+            snprintf(one, sizeof(one), "#ffff00 %s#", LV_SYMBOL_BATTERY_2); // 黄色
         } else if (level > 5) {
-            snprintf(one, sizeof(one), "%s", LV_SYMBOL_BATTERY_1); // 橙色
+            snprintf(one, sizeof(one), "#ff8000 %s#", LV_SYMBOL_BATTERY_1); // 橙色
         } else {
-            snprintf(one, sizeof(one), "%s", LV_SYMBOL_BATTERY_EMPTY); // 红色
+            snprintf(one, sizeof(one), "#ff0000 %s#", LV_SYMBOL_BATTERY_EMPTY); // 红色
         }
         strcat(text, one);
-
 #if IS_ENABLED(CONFIG_USB_DEVICE_STACK)
         if (state.usb_present) {
             strcat(text, " ");
