@@ -15,7 +15,7 @@ LOG_MODULE_DECLARE(zmk, CONFIG_ZMK_LOG_LEVEL);
 #include <zmk/wpm.h>
 
 static sys_slist_t widgets = SYS_SLIST_STATIC_INIT(&widgets);
-LV_FONT_DECLARE(font_12_roboto_extra_bold);
+// LV_FONT_DECLARE(font_12_roboto_extra_bold);
 
 struct wpm_status_state {
     uint8_t wpm;
@@ -30,8 +30,8 @@ void set_wpm_symbol(lv_obj_t *label, struct wpm_status_state state) {
     snprintf(text, sizeof(text), "WPM : %i", state.wpm);
     lv_label_set_text(label, text);
     // 将label的颜色改为橙色
-    lv_obj_set_style_text_color(label, lv_color_hex(0xFFA500), LV_PART_MAIN);
-    lv_obj_set_style_text_font(label, &font_12_roboto_extra_bold, LV_PART_MAIN);
+    lv_obj_set_style_text_color(label, lv_color_hex(0xFFFFFF), LV_PART_MAIN);
+    lv_obj_set_style_text_font(label, &lv_font_montserrat_16, LV_PART_MAIN);
 }
 
 void wpm_status_update_cb(struct wpm_status_state state) {

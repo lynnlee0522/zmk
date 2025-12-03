@@ -137,7 +137,7 @@ ZMK_SUBSCRIPTION(widget_battery_status, zmk_usb_conn_state_changed);
 int zmk_widget_battery_status_init(struct zmk_widget_battery_status *widget, lv_obj_t *parent) {
     widget->obj = lv_label_create(parent);
     // 设置text的字体
-    lv_obj_set_style_text_font(widget->obj, &lv_font_montserrat_16, LV_PART_MAIN);
+    lv_obj_set_style_text_font(widget->obj, &lv_font_montserrat_20, LV_PART_MAIN);
     sys_slist_append(&widgets, &widget->node);
     widget_battery_status_init();
     return 0;

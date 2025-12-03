@@ -23,7 +23,6 @@ LV_FONT_DECLARE(lv_custom_symbol);
 
 #define LV_SYMBOL_LOCK "\xEF\x80\xA3"
 #define LV_SYMBOL_UNLOCK "\xEF\x8F\x81"
-#define LV_SYMBOL_BLUETOOTH_1 "\xEF\x8A\x93"
 
 struct output_status_state {
     struct zmk_endpoint_instance selected_endpoint;
@@ -41,8 +40,6 @@ static struct output_status_state get_state(const zmk_event_t *_eh) {
 
 static void set_status_symbol(lv_obj_t *label, struct output_status_state state) {
     // 设置label使用自定义符号字体
-    // LV_FONT_DECLARE(lv_symbol_lock);
-    // LV_FONT_DECLARE(lv_symbol_unlock);
 
     lv_label_set_recolor(label, true);
     char text[40] = {};

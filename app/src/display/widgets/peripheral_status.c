@@ -18,7 +18,7 @@ LOG_MODULE_DECLARE(zmk, CONFIG_ZMK_LOG_LEVEL);
 
 static sys_slist_t widgets = SYS_SLIST_STATIC_INIT(&widgets);
 
-#define LV_SYMBOL_KEYBOARD_1 "\xEF\x84\x9C"
+#define LV_SYMBOL_KEYBOARD "\xEF\x84\x9C"
 
 struct peripheral_status_state {
     bool connected;
@@ -36,13 +36,16 @@ static struct peripheral_status_state get_state(const zmk_event_t *_eh) {
 }
 
 static void set_status_symbol(lv_obj_t *label, struct peripheral_status_state state) {
+
+    lv_label_set_recolor(label, true);
     char text[64];
+
     if (state.connected) {
-        snprintf(text, sizeof(text), "%s %s %s", LV_SYMBOL_KEYBOARD_1, LV_SYMBOL_MINUS,
-                 LV_SYMBOL_KEYBOARD_1);
+        snprintf(text, sizeof(text), "#ffffff %s # #ffff00 %s # #ffffff %s#", LV_SYMBOL_KEYBOARD,
+                 LV_SYMBOL_MINUS, LV_SYMBOL_KEYBOARD);
     } else {
-        snprintf(text, sizeof(text), "%s %s %s", LV_SYMBOL_KEYBOARD_1, LV_SYMBOL_MINUS,
-                 LV_SYMBOL_CLOSE);
+        snprintf(text, sizeof(text), "#ffffff %s # #ffff00 %s # #ff0000 %s #", LV_SYMBOL_KEYBOARD,
+                 LV_SYMBOL_MINUS, LV_SYMBOL_CLOSE);
     }
 
     lv_label_set_text(label, text);
@@ -60,7 +63,7 @@ ZMK_SUBSCRIPTION(widget_peripheral_status, zmk_split_central_peripheral_status_c
 int zmk_widget_peripheral_status_init(struct zmk_widget_peripheral_status *widget,
                                       lv_obj_t *parent) {
     widget->obj = lv_label_create(parent);
-    lv_obj_set_style_text_color(widget->obj, lv_color_hex(0xFFA500), LV_PART_MAIN);
+    lv_obj_set_style_text_font(widget->obj, &lv_font_montserrat_20, LV_PART_MAIN);
 
     sys_slist_append(&widgets, &widget->node);
 

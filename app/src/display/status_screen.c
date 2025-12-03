@@ -37,9 +37,9 @@ static struct zmk_widget_layer_status layer_status_widget;
 static struct zmk_widget_wpm_status wpm_status_widget;
 #endif
 
-// #if IS_ENABLED(CONFIG_ZMK_WIDGET_INDICATORS_STATUS)
+#if IS_ENABLED(CONFIG_ZMK_WIDGET_INDICATORS_STATUS)
 static struct zmk_widget_hid_indicators_status indicators_status_widget;
-// #endif
+#endif
 
 static struct zmk_widget_logo logo_widget;
 static struct zmk_widget_kbd_name kbd_name_widget;
@@ -47,6 +47,13 @@ static struct zmk_widget_kbd_name kbd_name_widget;
 lv_obj_t *zmk_display_status_screen() {
     lv_obj_t *screen;
     screen = lv_obj_create(NULL);
+    // screen的背景色为深蓝色
+    lv_obj_set_style_bg_color(screen, lv_color_hex(0x000080), LV_PART_MAIN);
+
+#if IS_ENABLED(CONFIG_ZMK_WIDGET_OUTPUT_STATUS)
+    zmk_widget_output_status_init(&output_status_widget, screen);
+    lv_obj_align(zmk_widget_output_status_obj(&output_status_widget), LV_ALIGN_TOP_LEFT, 20, 10);
+#endif
 
 #if IS_ENABLED(CONFIG_ZMK_WIDGET_BATTERY_STATUS)
     zmk_widget_battery_status_init(&battery_status_widget, screen);
@@ -54,40 +61,35 @@ lv_obj_t *zmk_display_status_screen() {
                  10);
 #endif
 
-#if IS_ENABLED(CONFIG_ZMK_WIDGET_OUTPUT_STATUS)
-    zmk_widget_output_status_init(&output_status_widget, screen);
-    lv_obj_align(zmk_widget_output_status_obj(&output_status_widget), LV_ALIGN_TOP_LEFT, 20, 20);
-#endif
-
     // 展示logo
     zmk_widget_logo_init(&logo_widget, screen);
-    lv_obj_align(zmk_widget_logo_obj(&logo_widget), LV_ALIGN_TOP_MID, 0, 35);
+    lv_obj_align(zmk_widget_logo_obj(&logo_widget), LV_ALIGN_TOP_MID, 0, 45);
+
+    // 展示name
+    zmk_widget_kbd_name_init(&kbd_name_widget, screen);
+    lv_obj_align(zmk_widget_kbd_name_obj(&kbd_name_widget), LV_ALIGN_TOP_MID, 0, 90);
 
 #if IS_ENABLED(CONFIG_ZMK_WIDGET_PERIPHERAL_STATUS)
     zmk_widget_peripheral_status_init(&peripheral_status_widget, screen);
     lv_obj_align(zmk_widget_peripheral_status_obj(&peripheral_status_widget), LV_ALIGN_TOP_MID, 0,
-                 70);
+                 170);
 #endif
-
-    // 展示name
-    zmk_widget_kbd_name_init(&kbd_name_widget, screen);
-    lv_obj_align(zmk_widget_kbd_name_obj(&kbd_name_widget), LV_ALIGN_TOP_MID, 0, 95);
 
 #if IS_ENABLED(CONFIG_ZMK_WIDGET_LAYER_STATUS)
     zmk_widget_layer_status_init(&layer_status_widget, screen);
-    lv_obj_align(zmk_widget_layer_status_obj(&layer_status_widget), LV_ALIGN_TOP_MID, 0, 115);
+    lv_obj_align(zmk_widget_layer_status_obj(&layer_status_widget), LV_ALIGN_TOP_MID, 0, 200);
 #endif
 
 #if IS_ENABLED(CONFIG_ZMK_WIDGET_WPM_STATUS)
     zmk_widget_wpm_status_init(&wpm_status_widget, screen);
-    lv_obj_align(zmk_widget_wpm_status_obj(&wpm_status_widget), LV_ALIGN_BOTTOM_LEFT, 10, -20);
+    lv_obj_align(zmk_widget_wpm_status_obj(&wpm_status_widget), LV_ALIGN_BOTTOM_LEFT, 20, -10);
 #endif
 
-    // #if IS_ENABLED(CONFIG_ZMK_WIDGET_INDICATORS_STATUS)
+#if IS_ENABLED(CONFIG_ZMK_WIDGET_INDICATORS_STATUS)
     zmk_widget_hid_indicators_status_init(&indicators_status_widget, screen);
-    lv_obj_align(zmk_widget_hid_indicators_status_obj(&indicators_status_widget), LV_ALIGN_CENTER,
-                 -20, -20);
-    // #endif
+    lv_obj_align(zmk_widget_hid_indicators_status_obj(&indicators_status_widget),
+                 LV_ALIGN_BOTTOM_RIGHT, -20, -10);
+#endif
 
     return screen;
 }

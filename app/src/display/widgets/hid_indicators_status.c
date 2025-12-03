@@ -20,7 +20,7 @@ LOG_MODULE_DECLARE(zmk, CONFIG_ZMK_LOG_LEVEL);
 #define ZMK_LED_SCROLLLOCK_BIT BIT(2)
 
 static sys_slist_t widgets = SYS_SLIST_STATIC_INIT(&widgets);
-LV_FONT_DECLARE(font_12_roboto_extra_bold);
+// LV_FONT_DECLARE(font_12_roboto_extra_bold);
 
 struct hid_indicators_status_state {
     zmk_hid_indicators_t flags; // HID Indicator Status Bit Mask
@@ -59,9 +59,9 @@ int zmk_widget_hid_indicators_status_init(struct zmk_widget_hid_indicators_statu
     widget->obj = lv_label_create(parent);
 
     // 只设置一次样式
-    lv_obj_set_style_text_font(widget->obj, &font_12_roboto_extra_bold, LV_PART_MAIN);
+    lv_obj_set_style_text_font(widget->obj, &lv_font_montserrat_16, LV_PART_MAIN);
     // 将label的颜色改为橙色
-    lv_obj_set_style_text_color(widget->obj, lv_color_hex(0xFFA500), LV_PART_MAIN);
+    lv_obj_set_style_text_color(widget->obj, lv_color_hex(0xFFFFFF), LV_PART_MAIN);
 
     sys_slist_append(&widgets, &widget->node);
     widget_hid_indicators_status_init();

@@ -12,7 +12,7 @@ LOG_MODULE_DECLARE(zmk, CONFIG_ZMK_LOG_LEVEL);
 
 static sys_slist_t widgets = SYS_SLIST_STATIC_INIT(&widgets);
 
-LV_FONT_DECLARE(font_14_roboto_extra_bold);
+// LV_FONT_DECLARE(font_14_roboto_extra_bold);
 
 int zmk_widget_kbd_name_init(struct zmk_widget_kbd_name *widget, lv_obj_t *parent) {
     widget->obj = lv_label_create(parent);
@@ -20,7 +20,7 @@ int zmk_widget_kbd_name_init(struct zmk_widget_kbd_name *widget, lv_obj_t *paren
     // 设置文本为 CONFIG_ZMK_KEYBOARD_NAME
     lv_label_set_text(widget->obj, CONFIG_ZMK_KEYBOARD_NAME);
     // 设置字体为 font_14_roboto_extra_bold
-    lv_obj_set_style_text_font(widget->obj, &font_14_roboto_extra_bold, LV_PART_MAIN);
+    lv_obj_set_style_text_font(widget->obj, &lv_font_montserrat_18, LV_PART_MAIN);
     // 设置颜色为黄色
     lv_obj_set_style_text_color(widget->obj, lv_color_hex(0xFFFF00), LV_PART_MAIN);
     sys_slist_append(&widgets, &widget->node);
