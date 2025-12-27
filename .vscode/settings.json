@@ -24,5 +24,6 @@
     "-I${workspaceFolder}/app/include",
     "-I${workspaceFolder}/app/include/zmk",
     "-I${workspaceFolder}/modules/lib/gui/lvgl"
-  ]
+  ],
+  "commentTranslate.hover.enabled": true
 }

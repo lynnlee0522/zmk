@@ -37,50 +37,64 @@ struct battery_status_state
         [1] = {.is_peripheral = true, .source = 0, .level = 0}};
 
 static void set_battery_symbol(lv_obj_t *label, struct battery_status_state state) {
-    // 展示battery_objects的状态
-    char text[64] = {};
-    char one[16];
 
-    // 启用富文本着色
+    char text[256] = {0};
+    char line[96];
+
     lv_label_set_recolor(label, true);
 
     for (int i = 0; i < ZMK_SPLIT_CENTRAL_PERIPHERAL_COUNT + ZMK_SPLIT_CENTRAL_COUNT; i++) {
+
         state = battery_objects[i];
-        // 如果是外设且断联（比如level==0），则跳过
+
+        /* 外设断联直接跳过 */
         if (state.is_peripheral && state.level == 0) {
             continue;
         }
 
         uint8_t level = state.level;
 
-        // 根据电量设置不同颜色和符号
-        if (level > 95) {
-            snprintf(one, sizeof(one), "#00ff00 %s#", LV_SYMBOL_BATTERY_FULL); // 绿色
-        } else if (level > 65) {
-            snprintf(one, sizeof(one), "#aaff00 %s#", LV_SYMBOL_BATTERY_3); // 黄绿色
-        } else if (level > 35) {
-            snprintf(one, sizeof(one), "#ffff00 %s#", LV_SYMBOL_BATTERY_2); // 黄色
-        } else if (level > 5) {
-            snprintf(one, sizeof(one), "#ff8000 %s#", LV_SYMBOL_BATTERY_1); // 橙色
-        } else {
-            snprintf(one, sizeof(one), "#ff0000 %s#", LV_SYMBOL_BATTERY_EMPTY); // 红色
-        }
-        strcat(text, one);
-#if IS_ENABLED(CONFIG_USB_DEVICE_STACK)
-        if (state.usb_present) {
-            strcat(text, " ");
-            strcat(text, "#00ff00 " LV_SYMBOL_CHARGE "#"); // 白色充电符号
-        }
-#endif /* IS_ENABLED(CONFIG_USB_DEVICE_STACK) */
+        const char *color;
+        const char *battery_icon;
 
-        // 换行
-        if (i < ZMK_SPLIT_CENTRAL_PERIPHERAL_COUNT) {
+        if (level > 95) {
+            color = "00ff00";
+            battery_icon = LV_SYMBOL_BATTERY_FULL;
+        } else if (level > 65) {
+            color = "aaff00";
+            battery_icon = LV_SYMBOL_BATTERY_3;
+        } else if (level > 35) {
+            color = "ffff00";
+            battery_icon = LV_SYMBOL_BATTERY_2;
+        } else if (level > 5) {
+            color = "ff8000";
+            battery_icon = LV_SYMBOL_BATTERY_1;
+        } else {
+            color = "ff0000";
+            battery_icon = LV_SYMBOL_BATTERY_EMPTY;
+        }
+
+        /* 只有在 usb_present 时才显示充电符号 */
+        if (state.usb_present) {
+            snprintf(line, sizeof(line), "#%s %s %d%% %s#", color, battery_icon, level,
+                     LV_SYMBOL_CHARGE);
+        } else {
+            /* 用同一个符号，但颜色设为背景色 / 全透明 */
+            snprintf(line, sizeof(line), "#%s %s %d%%# #000080 %s#", color, battery_icon, level,
+                     LV_SYMBOL_CHARGE);
+        }
+
+        strcat(text, line);
+
+        /* 换行（必须在 recolor 块外） */
+        if (i < ZMK_SPLIT_CENTRAL_PERIPHERAL_COUNT + ZMK_SPLIT_CENTRAL_COUNT - 1) {
             strcat(text, "\n");
         }
     }
 
-    // 新建标签显示电池状态
     lv_label_set_text(label, text);
+
+    LOG_DBG("Battery label text:\n%s", text);
 }
 
 void battery_status_update_cb(struct battery_status_state state) {
@@ -99,6 +113,9 @@ static struct battery_status_state peripheral_battery_status_get_state(const zmk
         .is_peripheral = true,
         .source = ev->source + ZMK_SPLIT_CENTRAL_COUNT,
         .level = ev->state_of_charge,
+#if IS_ENABLED(CONFIG_USB_DEVICE_STACK)
+        .usb_present = false,
+#endif
     };
 }
 

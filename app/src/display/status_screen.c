@@ -63,11 +63,11 @@ lv_obj_t *zmk_display_status_screen() {
 
     // 展示logo
     zmk_widget_logo_init(&logo_widget, screen);
-    lv_obj_align(zmk_widget_logo_obj(&logo_widget), LV_ALIGN_TOP_MID, 0, 45);
+    lv_obj_align(zmk_widget_logo_obj(&logo_widget), LV_ALIGN_TOP_MID, 0, 55);
 
     // 展示name
     zmk_widget_kbd_name_init(&kbd_name_widget, screen);
-    lv_obj_align(zmk_widget_kbd_name_obj(&kbd_name_widget), LV_ALIGN_TOP_MID, 0, 90);
+    lv_obj_align(zmk_widget_kbd_name_obj(&kbd_name_widget), LV_ALIGN_TOP_MID, 0, 100);
 
 #if IS_ENABLED(CONFIG_ZMK_WIDGET_PERIPHERAL_STATUS)
     zmk_widget_peripheral_status_init(&peripheral_status_widget, screen);

@@ -53,13 +53,15 @@ static void set_status_symbol(lv_obj_t *label, struct output_status_state state)
             if (state.active_profile_connected) {
                 // 已配对且已连接
                 snprintf(text, sizeof(text),
-                         "#ffffff " LV_SYMBOL_BLUETOOTH " %i " LV_SYMBOL_LOCK " #"
+                         "#ffffff " LV_SYMBOL_BLUETOOTH " %i "
+                         " #"
                          "#00ff00 " LV_SYMBOL_OK " #",
                          state.selected_endpoint.ble.profile_index + 1);
             } else {
                 // 已配对但未连接
                 snprintf(text, sizeof(text),
-                         "#ffffff " LV_SYMBOL_BLUETOOTH " %i " LV_SYMBOL_LOCK " #"
+                         "#ffffff " LV_SYMBOL_BLUETOOTH " %i "
+                         " #"
                          "#ff0000 " LV_SYMBOL_CLOSE " #",
                          state.selected_endpoint.ble.profile_index + 1);
             }
