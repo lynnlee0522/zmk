@@ -125,7 +125,7 @@ jobs:
       - name: Check ZMK revision
         working-directory: ${{ env.base_dir }}
         run: |
-          zmk_revision=$(west list -f "{revision}" zmk)
+          zmk_revision=$(west list -f "{revision}" zmk_offical)
           echo "zmk_revision=${zmk_revision}" >> $GITHUB_ENV
           echo "ZMK revision: ${zmk_revision}"
 
