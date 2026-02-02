@@ -43,9 +43,11 @@ int zmk_widget_logo_init(struct zmk_widget_logo *widget, lv_obj_t *parent) {
     lv_obj_set_style_border_width(row_container, 0, 0);
 
     // 创建图片对象并添加到 row_container
-    lv_obj_t *img = lv_img_create(row_container);
+    lv_obj_t *image = lv_image_create(row_container);
+    // 设置图片的圆角
+    lv_obj_set_style_radius(image, 5, 0);
     LV_IMG_DECLARE(logo_img);
-    lv_img_set_src(img, &logo_img);
+    lv_image_set_src(image, &logo_img);
 
     // 创建文本标签，显示 "NXT kb"
     lv_obj_t *label = lv_label_create(row_container);
