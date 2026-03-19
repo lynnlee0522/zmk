@@ -38,6 +38,13 @@ lv_obj_t *zmk_display_status_screen() {
     lv_obj_t *screen;
     screen = lv_obj_create(NULL);
 
+    // 整个屏幕显示纯白
+    lv_obj_set_style_bg_color(screen, lv_color_white(), LV_PART_MAIN);
+    lv_obj_set_style_bg_opa(screen, LV_OPA_COVER, LV_PART_MAIN);
+    lv_obj_set_style_border_width(screen, 0, LV_PART_MAIN);
+    // 4. 去除可能存在的内边距（Padding），让内部组件能完全贴边
+    lv_obj_set_style_pad_all(screen, 0, LV_PART_MAIN);
+
 #if IS_ENABLED(CONFIG_CUSTOM_WIDGET_BATTERY_STATUS)
     zmk_widget_battery_status_init(&battery_status_widget, screen);
     lv_obj_align(zmk_widget_battery_status_obj(&battery_status_widget), LV_ALIGN_TOP_MID, 0, 2);

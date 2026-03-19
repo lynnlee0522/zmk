@@ -48,6 +48,14 @@ lv_obj_t *zmk_display_status_screen() {
     lv_obj_t *screen;
     screen = lv_obj_create(NULL);
 
+    lv_obj_set_style_bg_color(screen, lv_color_white(), LV_PART_MAIN);
+    lv_obj_set_style_bg_opa(screen, LV_OPA_COVER, LV_PART_MAIN);
+
+    // 文字纯黑
+    // lv_obj_set_style_text_color(label, lv_color_black(), LV_PART_MAIN);
+    // 禁用文字的透明度混合
+    // lv_obj_set_style_text_opa(label, LV_OPA_COVER, LV_PART_MAIN);
+
 #if IS_ENABLED(CONFIG_ZMK_WIDGET_BATTERY_STATUS)
     zmk_widget_battery_status_init(&battery_status_widget, screen);
     lv_obj_align(zmk_widget_battery_status_obj(&battery_status_widget), LV_ALIGN_TOP_RIGHT, 0, 0);
@@ -77,10 +85,10 @@ lv_obj_t *zmk_display_status_screen() {
     lv_obj_align(zmk_widget_layer_status_obj(&layer_status_widget), LV_ALIGN_TOP_MID, 0, 115);
 #endif
 
-#if IS_ENABLED(CONFIG_ZMK_WIDGET_WPM_STATUS)
-    zmk_widget_wpm_status_init(&wpm_status_widget, screen);
-    lv_obj_align(zmk_widget_wpm_status_obj(&wpm_status_widget), LV_ALIGN_BOTTOM_LEFT, 0, 0);
-#endif
+    // #if IS_ENABLED(CONFIG_ZMK_WIDGET_WPM_STATUS)
+    //     zmk_widget_wpm_status_init(&wpm_status_widget, screen);
+    //     lv_obj_align(zmk_widget_wpm_status_obj(&wpm_status_widget), LV_ALIGN_BOTTOM_LEFT, 0, 0);
+    // #endif
 
 #if IS_ENABLED(CONFIG_ZMK_WIDGET_INDICATORS_STATUS)
     zmk_widget_hid_indicators_status_init(&indicators_status_widget, screen);
