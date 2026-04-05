@@ -95,6 +95,7 @@ target_sources_ifdef(CONFIG_ZMK_BATTERY_REPORTING app PRIVATE src/events/battery
 target_sources_ifdef(CONFIG_ZMK_BATTERY_REPORTING app PRIVATE src/battery.c)
 
 target_sources_ifdef(CONFIG_ZMK_HID_INDICATORS app PRIVATE src/events/hid_indicators_changed.c)
+add_subdirectory_ifdef(CONFIG_ZMK_HID_INDICATORS src/indicators)
 
 if (CONFIG_ZMK_SPLIT)
   if(CONFIG_ZMK_SPLIT_ROLE_CENTRAL)
