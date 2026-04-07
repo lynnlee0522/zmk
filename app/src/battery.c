@@ -54,24 +54,29 @@ static int zmk_battery_update(const struct device *battery) {
     struct sensor_value state_of_charge;
     int rc;
 
+    LOG_ERR("[BATTERY_UPDATE] START, battery=%p", battery);
+
 #if IS_ENABLED(CONFIG_ZMK_BATTERY_REPORTING_FETCH_MODE_STATE_OF_CHARGE)
 
     rc = sensor_sample_fetch_chan(battery, SENSOR_CHAN_GAUGE_STATE_OF_CHARGE);
     if (rc != 0) {
-        LOG_DBG("Failed to fetch battery values: %d", rc);
+        LOG_ERR("[BATTERY_UPDATE] Failed to fetch (STATE_OF_CHARGE): %d", rc);
         return rc;
     }
 
     rc = sensor_channel_get(battery, SENSOR_CHAN_GAUGE_STATE_OF_CHARGE, &state_of_charge);
 
     if (rc != 0) {
-        LOG_DBG("Failed to get battery state of charge: %d", rc);
+        LOG_ERR("[BATTERY_UPDATE] Failed to get state_of_charge: %d", rc);
         return rc;
     }
+
+    LOG_ERR("[BATTERY_UPDATE] Fetched STATE_OF_CHARGE: val1=%u, val2=%d", state_of_charge.val1,
+            state_of_charge.val2);
 #elif IS_ENABLED(CONFIG_ZMK_BATTERY_REPORTING_FETCH_MODE_LITHIUM_VOLTAGE)
     rc = sensor_sample_fetch_chan(battery, SENSOR_CHAN_VOLTAGE);
     if (rc != 0) {
-        LOG_DBG("Failed to fetch battery values: %d", rc);
+        LOG_ERR("[BATTERY_UPDATE] Failed to fetch (VOLTAGE): %d", rc);
         return rc;
     }
 
@@ -79,28 +84,35 @@ static int zmk_battery_update(const struct device *battery) {
     rc = sensor_channel_get(battery, SENSOR_CHAN_VOLTAGE, &voltage);
 
     if (rc != 0) {
-        LOG_DBG("Failed to get battery voltage: %d", rc);
+        LOG_ERR("[BATTERY_UPDATE] Failed to get voltage: %d", rc);
         return rc;
     }
 
     uint16_t mv = voltage.val1 * 1000 + (voltage.val2 / 1000);
     state_of_charge.val1 = lithium_ion_mv_to_pct(mv);
 
-    LOG_DBG("State of change %d from %d mv", state_of_charge.val1, mv);
+    LOG_ERR("[BATTERY_UPDATE] Fetched VOLTAGE: %d mV → %u%%", mv, state_of_charge.val1);
 #else
 #error "Not a supported reporting fetch mode"
 #endif
 
+    LOG_ERR("[BATTERY_UPDATE] last_state=%u, new_state=%u, changed=%d", last_state_of_charge,
+            state_of_charge.val1, (last_state_of_charge != state_of_charge.val1));
+
     if (last_state_of_charge != state_of_charge.val1) {
         last_state_of_charge = state_of_charge.val1;
+
+        LOG_ERR("[BATTERY_UPDATE] Raising event with level=%u", last_state_of_charge);
 
         rc = raise_zmk_battery_state_changed(
             (struct zmk_battery_state_changed){.state_of_charge = last_state_of_charge});
 
         if (rc != 0) {
-            LOG_ERR("Failed to raise battery state changed event: %d", rc);
+            LOG_ERR("[BATTERY_UPDATE] Failed to raise event: %d", rc);
             return rc;
         }
+    } else {
+        LOG_ERR("[BATTERY_UPDATE] Level unchanged, skipping event");
     }
 
 #if IS_ENABLED(CONFIG_BT_BAS)
@@ -142,22 +154,30 @@ static void zmk_battery_start_reporting() {
 }
 
 static int zmk_battery_init(void) {
+    LOG_ERR("[BATTERY_INIT] START");
+
 #if !DT_HAS_CHOSEN(zmk_battery)
     battery = device_get_binding("BATTERY");
 
+    LOG_ERR("[BATTERY_INIT] Using deprecated BATTERY label, device=%p", battery);
+
     if (battery == NULL) {
+        LOG_ERR("[BATTERY_INIT] FAILED: battery device not found");
         return -ENODEV;
     }
 
     LOG_WRN("Finding battery device labeled BATTERY is deprecated. Use zmk,battery chosen node.");
 #endif
 
+    LOG_ERR("[BATTERY_INIT] Checking device ready: battery=%p", battery);
     if (!device_is_ready(battery)) {
-        LOG_ERR("Battery device \"%s\" is not ready", battery->name);
+        LOG_ERR("[BATTERY_INIT] FAILED: Battery device \"%s\" is not ready", battery->name);
         return -ENODEV;
     }
 
+    LOG_ERR("[BATTERY_INIT] Device ready, starting reporting");
     zmk_battery_start_reporting();
+    LOG_ERR("[BATTERY_INIT] SUCCESS");
     return 0;
 }
 

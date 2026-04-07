@@ -16,7 +16,7 @@ config ZMK_WIDGET_BATTERY_STATUS
 if ZMK_WIDGET_BATTERY_STATUS
 
 config ZMK_WIDGET_BATTERY_STATUS_SHOW_PERCENTAGE
-    bool "Show battery level percentage in text"
+    bool "Show battery level percentage after the battery icon"
 
 endif
 

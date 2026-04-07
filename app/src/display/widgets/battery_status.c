@@ -20,6 +20,21 @@ LOG_MODULE_DECLARE(zmk, CONFIG_ZMK_LOG_LEVEL);
 
 static sys_slist_t widgets = SYS_SLIST_STATIC_INIT(&widgets);
 
+// 根据电量百分比获取对应的电池符号
+static inline const char *get_battery_symbol(uint8_t level) {
+    if (level > 95) {
+        return LV_SYMBOL_BATTERY_FULL;
+    } else if (level > 65) {
+        return LV_SYMBOL_BATTERY_3;
+    } else if (level > 35) {
+        return LV_SYMBOL_BATTERY_2;
+    } else if (level > 5) {
+        return LV_SYMBOL_BATTERY_1;
+    } else {
+        return LV_SYMBOL_BATTERY_EMPTY;
+    }
+}
+
 struct battery_status_state {
     bool is_peripheral; // 是否是外设电池状态
     uint8_t source;
@@ -37,61 +52,62 @@ struct battery_status_state
         [1] = {.is_peripheral = true, .source = 0, .level = 0}};
 
 static void set_battery_symbol(lv_obj_t *label, struct battery_status_state state) {
-    // 展示battery_objects的状态
     char text[64] = {};
-    char one[16];
+    int len = 0;
+    const int battery_count = ZMK_SPLIT_CENTRAL_PERIPHERAL_COUNT + ZMK_SPLIT_CENTRAL_COUNT;
 
-    for (int i = 0; i < ZMK_SPLIT_CENTRAL_PERIPHERAL_COUNT + ZMK_SPLIT_CENTRAL_COUNT; i++) {
+    LOG_ERR("[SET_SYMBOL] battery_count=%d", battery_count);
+
+    for (int i = 0; i < battery_count; i++) {
         state = battery_objects[i];
-        // 如果是外设且断联（比如level==0），则跳过
+        LOG_ERR("[SET_SYMBOL] i=%d, is_peripheral=%d, level=%u", i, state.is_peripheral, state.level);
+        
+        // 跳过断联的外设（电量为0）
         if (state.is_peripheral && state.level == 0) {
+            LOG_ERR("[SET_SYMBOL] skip: disconnected peripheral");
             continue;
         }
 
-        uint8_t level = state.level;
-
-        // 根据电量设置不同颜色和符号
-        if (level > 95) {
-            snprintf(one, sizeof(one), "%s", LV_SYMBOL_BATTERY_FULL); // 绿色
-        } else if (level > 65) {
-            snprintf(one, sizeof(one), "%s", LV_SYMBOL_BATTERY_3); // 黄绿色
-        } else if (level > 35) {
-            snprintf(one, sizeof(one), "%s", LV_SYMBOL_BATTERY_2); // 黄色
-        } else if (level > 5) {
-            snprintf(one, sizeof(one), "%s", LV_SYMBOL_BATTERY_1); // 橙色
-        } else {
-            snprintf(one, sizeof(one), "%s", LV_SYMBOL_BATTERY_EMPTY); // 红色
-        }
-        strcat(text, one);
+        const char *symbol = get_battery_symbol(state.level);
+        len += snprintf(text + len, sizeof(text) - len, "%s %u%%", symbol, state.level);
+        LOG_ERR("[SET_SYMBOL] appended: symbol=%s, level=%u, len=%d", symbol, state.level, len);
 
 #if IS_ENABLED(CONFIG_USB_DEVICE_STACK)
         if (state.usb_present) {
-            strcat(text, " ");
-            strcat(text, LV_SYMBOL_CHARGE); // 充电符号
+            len += snprintf(text + len, sizeof(text) - len, " %s", LV_SYMBOL_CHARGE);
         }
-#endif /* IS_ENABLED(CONFIG_USB_DEVICE_STACK) */
+#endif
 
-        // 换行
+        // 分隔中央和外设的显示
         if (i < ZMK_SPLIT_CENTRAL_PERIPHERAL_COUNT) {
-            strcat(text, "\n");
+            len += snprintf(text + len, sizeof(text) - len, "\n");
         }
     }
 
-    // 新建标签显示电池状态
+    LOG_ERR("[SET_SYMBOL] final text: %s", text);
     lv_label_set_text(label, text);
 }
 
 void battery_status_update_cb(struct battery_status_state state) {
     int idx = state.is_peripheral ? 1 : 0;
-    battery_objects[idx] = state; // 存储最新状态
+    battery_objects[idx] = state;
+    
+    LOG_ERR("[UPDATE_CB] idx=%d, is_peripheral=%d, level=%u", idx, state.is_peripheral, state.level);
 
     struct zmk_widget_battery_status *widget;
-    SYS_SLIST_FOR_EACH_CONTAINER(&widgets, widget, node) { set_battery_symbol(widget->obj, state); }
+    SYS_SLIST_FOR_EACH_CONTAINER(&widgets, widget, node) {
+        set_battery_symbol(widget->obj, state);
+    }
 }
 
 static struct battery_status_state peripheral_battery_status_get_state(const zmk_event_t *eh) {
     const struct zmk_peripheral_battery_state_changed *ev =
         as_zmk_peripheral_battery_state_changed(eh);
+
+    if (ev == NULL) {
+        LOG_WRN("Invalid peripheral battery event");
+        return (struct battery_status_state){.is_peripheral = true, .source = 0, .level = 0};
+    }
 
     return (struct battery_status_state){
         .is_peripheral = true,
@@ -102,23 +118,29 @@ static struct battery_status_state peripheral_battery_status_get_state(const zmk
 
 static struct battery_status_state central_battery_status_get_state(const zmk_event_t *eh) {
     const struct zmk_battery_state_changed *ev = as_zmk_battery_state_changed(eh);
+    uint8_t level = (ev != NULL) ? ev->state_of_charge : zmk_battery_state_of_charge();
+
+    LOG_ERR("[CENTRAL] ev=%p, ev_level=%u, fallback_level=%u, final_level=%u",
+            ev, (ev != NULL) ? ev->state_of_charge : 0xFF, zmk_battery_state_of_charge(), level);
+
+#if IS_ENABLED(CONFIG_USB_DEVICE_STACK)
+    bool usb_powered = zmk_usb_is_powered();
+#endif
 
     return (struct battery_status_state){
         .is_peripheral = false,
         .source = 0,
-        .level = (ev != NULL) ? ev->state_of_charge : zmk_battery_state_of_charge(),
+        .level = level,
 #if IS_ENABLED(CONFIG_USB_DEVICE_STACK)
-        .usb_present = zmk_usb_is_powered(),
-#endif /* IS_ENABLED(CONFIG_USB_DEVICE_STACK) */
+        .usb_present = usb_powered,
+#endif
     };
 }
 
 static struct battery_status_state battery_status_get_state(const zmk_event_t *eh) {
-    if (as_zmk_peripheral_battery_state_changed(eh) != NULL) {
-        return peripheral_battery_status_get_state(eh);
-    } else {
-        return central_battery_status_get_state(eh);
-    }
+    return (as_zmk_peripheral_battery_state_changed(eh) != NULL)
+        ? peripheral_battery_status_get_state(eh)
+        : central_battery_status_get_state(eh);
 }
 
 ZMK_DISPLAY_WIDGET_LISTENER(widget_battery_status, struct battery_status_state,
@@ -134,7 +156,6 @@ ZMK_SUBSCRIPTION(widget_battery_status, zmk_usb_conn_state_changed);
 
 int zmk_widget_battery_status_init(struct zmk_widget_battery_status *widget, lv_obj_t *parent) {
     widget->obj = lv_label_create(parent);
-    // 设置text的字体
     lv_obj_set_style_text_font(widget->obj, &lv_font_montserrat_16, LV_PART_MAIN);
     sys_slist_append(&widgets, &widget->node);
     widget_battery_status_init();
