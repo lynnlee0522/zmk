@@ -56,21 +56,16 @@ static void set_battery_symbol(lv_obj_t *label, struct battery_status_state stat
     int len = 0;
     const int battery_count = ZMK_SPLIT_CENTRAL_PERIPHERAL_COUNT + ZMK_SPLIT_CENTRAL_COUNT;
 
-    LOG_ERR("[SET_SYMBOL] battery_count=%d", battery_count);
-
     for (int i = 0; i < battery_count; i++) {
         state = battery_objects[i];
-        LOG_ERR("[SET_SYMBOL] i=%d, is_peripheral=%d, level=%u", i, state.is_peripheral, state.level);
-        
+
         // 跳过断联的外设（电量为0）
         if (state.is_peripheral && state.level == 0) {
-            LOG_ERR("[SET_SYMBOL] skip: disconnected peripheral");
             continue;
         }
 
         const char *symbol = get_battery_symbol(state.level);
         len += snprintf(text + len, sizeof(text) - len, "%s %u%%", symbol, state.level);
-        LOG_ERR("[SET_SYMBOL] appended: symbol=%s, level=%u, len=%d", symbol, state.level, len);
 
 #if IS_ENABLED(CONFIG_USB_DEVICE_STACK)
         if (state.usb_present) {
@@ -84,20 +79,15 @@ static void set_battery_symbol(lv_obj_t *label, struct battery_status_state stat
         }
     }
 
-    LOG_ERR("[SET_SYMBOL] final text: %s", text);
     lv_label_set_text(label, text);
 }
 
 void battery_status_update_cb(struct battery_status_state state) {
     int idx = state.is_peripheral ? 1 : 0;
     battery_objects[idx] = state;
-    
-    LOG_ERR("[UPDATE_CB] idx=%d, is_peripheral=%d, level=%u", idx, state.is_peripheral, state.level);
 
     struct zmk_widget_battery_status *widget;
-    SYS_SLIST_FOR_EACH_CONTAINER(&widgets, widget, node) {
-        set_battery_symbol(widget->obj, state);
-    }
+    SYS_SLIST_FOR_EACH_CONTAINER(&widgets, widget, node) { set_battery_symbol(widget->obj, state); }
 }
 
 static struct battery_status_state peripheral_battery_status_get_state(const zmk_event_t *eh) {
@@ -120,9 +110,6 @@ static struct battery_status_state central_battery_status_get_state(const zmk_ev
     const struct zmk_battery_state_changed *ev = as_zmk_battery_state_changed(eh);
     uint8_t level = (ev != NULL) ? ev->state_of_charge : zmk_battery_state_of_charge();
 
-    LOG_ERR("[CENTRAL] ev=%p, ev_level=%u, fallback_level=%u, final_level=%u",
-            ev, (ev != NULL) ? ev->state_of_charge : 0xFF, zmk_battery_state_of_charge(), level);
-
 #if IS_ENABLED(CONFIG_USB_DEVICE_STACK)
     bool usb_powered = zmk_usb_is_powered();
 #endif
@@ -139,8 +126,8 @@ static struct battery_status_state central_battery_status_get_state(const zmk_ev
 
 static struct battery_status_state battery_status_get_state(const zmk_event_t *eh) {
     return (as_zmk_peripheral_battery_state_changed(eh) != NULL)
-        ? peripheral_battery_status_get_state(eh)
-        : central_battery_status_get_state(eh);
+               ? peripheral_battery_status_get_state(eh)
+               : central_battery_status_get_state(eh);
 }
 
 ZMK_DISPLAY_WIDGET_LISTENER(widget_battery_status, struct battery_status_state,
@@ -156,7 +143,7 @@ ZMK_SUBSCRIPTION(widget_battery_status, zmk_usb_conn_state_changed);
 
 int zmk_widget_battery_status_init(struct zmk_widget_battery_status *widget, lv_obj_t *parent) {
     widget->obj = lv_label_create(parent);
-    lv_obj_set_style_text_font(widget->obj, &lv_font_montserrat_16, LV_PART_MAIN);
+    lv_obj_set_style_text_font(widget->obj, &lv_font_montserrat_14, LV_PART_MAIN);
     sys_slist_append(&widgets, &widget->node);
     widget_battery_status_init();
     return 0;
